@@ -1,4 +1,4 @@
-# Climbing Tracker
+# Rock Climbing Activity Tracker
 
 A CRUD application developed for Oregon State University's CS340 Databases class by Harvey Ng and Charles Loughin.
 
