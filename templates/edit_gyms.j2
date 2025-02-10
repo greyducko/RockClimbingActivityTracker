@@ -1,0 +1,66 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>Edit gyms table</title>
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <p> Editing row in gyms table: </p>
+
+            <!-- Access results tuple passed from gyms.py -->
+            {% if results %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in results[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be the header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Now, iterate through every item in results -->
+                    {% for item in results %}
+                    <tr>
+                        <!-- Then iterate through every key in the current results dictionary -->
+                        {% for key in results[0].keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{results[0][key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+
+            <!-- form to edit data in gyms-->
+            <form id="edit_gyms" action="/edit_gyms/{{results[0]["gym_id"]}}" method="post">
+                
+                <p><legend><strong>Edit gym</strong></legend></p>
+                <fieldset>
+                    
+                    <!-- Create hidden form input to store the passed 'gym_id' of the row we are editing so we can access it easily in our 'POST' method in gyms.py -->
+                    <p><input type="hidden" value="{{results[0]["gym_id"]}}" class="form-control" id="gym_id" name="gym_id" required>
+                    
+                    <!-- Preset form input to match gym_name currently stored for 'gym_id' of row to be updated via value= and accessing our passed results tuple -->
+                    <label for="gym_name">gym_name:</label>
+                    <input type="text" value="{{results[0]["gym_name"]}}" class="form-control" id="gym_name" name="gym_name" required>
+                    </p>
+
+                </fieldset>
+
+                <!-- Create 'Edit gym' and 'Cancel' buttons -->
+                <p><input type="submit" value="Edit gym" name="edit_gyms" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/gyms'><input class="btn" type="button" value="Cancel"></a></p>
+            </form>
+</html>

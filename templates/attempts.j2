@@ -1,0 +1,146 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>attempts</title>
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * DIVS: browse, insert
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+		}
+	}
+
+	function new_attempts() {
+		showform('insert');
+	}
+
+	function browse_attempts() {
+		showform('browse');
+	}
+	</script>
+</head>
+
+<body onload="browse_attempts()">
+
+	<h1>attempts</h1>
+
+    <nav>
+      <a href="/" style="margin-inline-end: 10px">Home</a>  
+      <a href="/users" style="margin-inline-end: 10px">users</a>
+      <a href="/gyms" style="margin-inline-end: 10px">gyms</a>  
+      <a href="/users_gyms" style="margin-inline-end: 10px">users_gyms</a>  
+      <a href="/sessions" style="margin-inline-end: 10px">sessions</a>
+      <a href="/attempts">attempts</a>  
+    </nav>
+
+	<!-- browse -->
+	<div id="browse">
+		<p>Available functionality: Create, Read</p>
+		<p><a href="#" onClick="new_attempts()">Add New</a></p>
+
+		<table border="1" cellpadding="5">
+
+            <!-- Access attempts tuple passed from attempts.py --> 
+
+            {% if attempts %}
+			    <thead>
+				    <tr>
+					    <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in attempts[0].keys() %}
+					    
+                        <!-- Create a <th> tag with the key inside of it, this will be the header row -->
+					    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+					
+                        <!-- End of for loop -->
+                        {% endfor %} 
+                    </tr>
+
+				<tbody>
+					<!-- Now, iterate through every row in attempts -->
+					{% for row in attempts %}
+
+					    <tr>
+
+						    <!-- Then iterate through every key in the current row dictionary -->
+                            {% for key in row.keys() %}
+
+						    <!-- Create a <td> element with the value of that key in it -->
+						    <td> {{row[key]}} </td> 
+
+                            {% endfor %}
+					    </tr> 
+
+                    {% endfor %} 
+            {% endif %} 
+        </table>   
+	
+	</div>	
+
+	<!--insert-->
+	<div id="insert">
+	
+		<!-- form to INSERT new data into attempts-->
+		<form id="attempts" action="/attempts" method="post">
+			<p><legend><strong>Add attempt</strong></legend></p>
+			<fieldset>
+
+				<!-- Select the grade -->
+				<p><label for="grade">grade</label>
+				<select class="form-control" id="grade" name="grade" required>
+                    <option value="1" selected="selected">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select></p>
+
+				<!-- Select 0 (for failure), 1 (for success)-->
+				<p><label for="is_success">is_success</label>
+				<select class="form-control" id="is_success" name="is_success" required>
+                    <option value="0">0</option>
+                    <option value="1" selected="selected">1</option>
+                </select></p>
+
+				<!-- Select session -->
+				<p><label for="session_id">session_id, session_date</label>
+				<select class="form-control" id="session_date" name="session_id" placeholder="" required>
+
+					<!-- Add all available sessions as options, shown as session_id, session_date -->
+                	{% for row in sessions_ids_dates %}
+					<option value="{{row["session_id"]}}">{{row["session_id"]}}, {{row["session_date"]}}</option>
+					{% endfor %} 
+
+				</select></p>
+
+            </fieldset>
+
+            <!-- Create 'Add attempt' and 'Cancel' buttons -->
+			<p><input type="submit" value="Add attempt" name="add_attempts" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browse_attempts()"> 
+			</p>
+        </form>
+	</div>
+
+</body>
+</html>

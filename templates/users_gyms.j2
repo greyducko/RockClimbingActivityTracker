@@ -1,0 +1,124 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>users_gyms</title>
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * DIVS: browse, insert
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none'
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+
+	function new_users_gyms() {
+		showform('insert');
+	}
+
+	function browse_users_gyms() {
+		showform('browse');
+	}
+	</script>
+</head>
+
+<body onload="browse_users_gyms()">
+	<h1>users_gyms</h1> 
+
+	<nav>
+      <a href="/" style="margin-inline-end: 10px">Home</a>  
+      <a href="/users" style="margin-inline-end: 10px">users</a>
+      <a href="/gyms" style="margin-inline-end: 10px">gyms</a>  
+      <a href="/users_gyms" style="margin-inline-end: 10px">users_gyms</a>  
+      <a href="/sessions" style="margin-inline-end: 10px">sessions</a>
+      <a href="/attempts">attempts</a>  
+    </nav>
+
+	<!-- browse -->
+	<div id="browse">
+		<p>Available functionality: Create, Read, Update, Delete</p>
+		<p>Note: Each user, gym relationship must be unique.</p>
+		<p><a href="#" onClick="new_users_gyms()">Add New</a> </p>
+
+		<table border="1" cellpadding="5">
+
+            <!-- Access users_gyms tuple passed from users_gyms.py --> 
+
+            {% if users_gyms %}
+			    <thead>
+				    <tr>
+					    <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in users_gyms[0].keys() %}
+					    
+                        <!-- Create a <th> tag with the key inside of it, this will be the header row -->
+					    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+					
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+				<tbody>
+					<!-- Iterate through every row in users_gyms -->
+					{% for row in users_gyms %}
+					    <tr>
+						    <!-- Iterate through every key in the current row dictionary -->
+                            {% for key in row.keys() %}
+
+						    <!-- Create a <td> element with the value of that key in it -->
+						    <td> {{row[key]}} </td> 
+                            {% endfor %}
+
+                            <!-- Create edit/delete buttons -->
+						    <td><a href="edit_users_gyms/{{row["user_gym_id"]}}" class="btn btn-default">Edit</a></td>
+						    <td><a href="delete_users_gyms/{{row["user_gym_id"]}}" class="btn btn-default">Delete</a></td>
+
+					    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>   
+	</div>	
+
+	<!--insert-->
+	<div id="insert">
+		<!-- form to INSERT new data into users_gyms-->
+		<form id="insert_users_gyms" action="/users_gyms" method="post">
+			<p><legend><strong>Add user_gym</strong></legend></p>
+			<fieldset>
+		
+                <!-- Dropdown for full_name-->
+                <p><label for="user_id">full_name: </label>
+                <select type="text" class="form-control" id="user_id" name="user_id" required>
+					{% for row in full_names %}
+					<option value="{{row["user_id"]}}">{{row["full_name"]}}</option>
+					{% endfor %} 
+				</select></p>
+				
+				<!-- Dropdown for gym_name-->
+				<p><label for="gym_id">gym_name:</label>
+				<select type="text" class="form-control" id="gym_id" name="gym_id"  placeholder="" required>
+					{% for row in gym_names %}
+					<option value="{{row["gym_id"]}}">{{row["gym_name"]}}</option>
+					{% endfor %} 
+				</select></p>
+            </fieldset>
+
+            <!-- Create 'Add user_gym' and 'Cancel' buttons -->
+			<p><input type="submit" value="Add user_gym" name="add_users_gyms" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browse_users_gyms()"></p>
+        </form>
+	</div>
+</body>
+</html>

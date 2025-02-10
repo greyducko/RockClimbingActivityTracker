@@ -1,0 +1,77 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>Edit sessions table</title>
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <p> Editing row in sessions table (only the gym may be edited; gym can be null, satisfying nullable requirement): </p>
+
+            <!-- Access results tuple passed from sessions.py -->
+            {% if results %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in results[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Now, iterate through every item in results -->
+                    {% for item in results %}
+                    <tr>
+                        <!-- Then iterate through every key in the current results dictionary -->
+                        {% for key in results[0].keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{results[0][key]}}</td> {% endfor %} 
+
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+
+            <!-- form to edit data in sessions-->
+            <form id="edit_sessions" action="/edit_sessions/{{results[0]["session_id"]}}" method="post">
+                <p><legend><strong>Edit session</strong></legend></p>
+                <fieldset>
+
+                    <!-- Create hidden form input to store the passed 'session_id' of the row we are editing so we can access it easily in our 'POST' method in sessions.py -->
+                    <input type="hidden" value="{{results[0]["session_id"]}}" class="form-control" id="session_id" name="session_id" required>
+                    
+                    <!-- Show the date for corresponding session -->
+                    <p><label for="date">date: </label>
+                    <input type="date" value="{{results[0]["date"]}}" class="form-control" id="first_name" name="first_name" required readonly style="background-color: #d1d1d1"></p>
+
+                    <!-- Show the full_name for corresponding user -->
+                    <p><label for="user_id">full_name: </label>
+                    <input type="text" value="{{results[0]["full_name"]}}" class="form-control" id="user_id" name="user_id" required readonly style="background-color: #d1d1d1"></p>
+
+                    <!-- Create dropdown list of available gyms to choose from -->
+                    <p><label for="gym_id">gym_name:</label>
+                    <select class="form-control" id="gym_id" name="gym_id"> 
+                        <option value="NULL">None</option>
+                        {% for row in gym_names %}
+					    <option value="{{row["gym_id"]}}">{{row["gym_name"]}}</option>
+					    {% endfor %} 
+                    </select></p>
+                
+                </fieldset>
+
+                <!-- Create 'Edit session' and 'Cancel' buttons -->
+                <p><input type="submit" value="Edit session" name="edit_sessions" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/sessions'><input class="btn" type="button" value="Cancel"></a></p>
+            </form>
+</html>

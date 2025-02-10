@@ -1,0 +1,81 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>Edit users_gyms table</title>
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <p>Editing row in users_gyms table (only the gym may be edited):</p>
+
+            <!-- Access results tuple passed from users_gyms.py -->
+            {% if results %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in results[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be the header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Iterate through every item in results -->
+                    {% for item in results %}
+                    <tr>
+                        <!-- Then iterate through every key in the current results dictionary -->
+                        {% for key in results[0].keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{results[0][key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+
+            <!-- form to edit data in users_gyms-->
+            <form id="edit_users_gyms" action="/edit_users_gyms/{{results[0]["user_gym_id"]}}" method="post">
+                <p><legend><strong>Edit user_gym</strong></legend></p>
+                <fieldset>
+
+                    <!-- Create hidden form input to store the passed 'user_gym_id' of the row we are editing so we can access it easily in our 'POST' method in users_gyms.py -->
+                    <input type="hidden" value="{{results[0]["user_gym_id"]}}" class="form-control" id="user_gym_id" name="user_gym_id" required>
+                    
+                    <!-- Show the full_name for corresponding user -->
+                    <p><label for="user_id">full name:</label>
+                    <input  type="text" class="form-control" id="user_id" name="user_id" value="{{full_name[0]["full_name"]}}" readonly style="background-color: #d1d1d1"></p>
+
+                    <!-- Dropwdown list to show gyms you can choose from-->
+                    <p><label for="gym_id">gym_name:</label>
+                    <select class="form-control" id="gym_id" name="gym_id" required > 
+
+                        <!-- Access our gym_names tuple passed from app.py-->
+                        {% for row in gym_names %}
+
+                                <!-- If the gym_name matches the value of the gym_name of row we are currently editing, pre-select that option -->
+                                {% if row['gym_name'] == results[0]["gym_name"] %}
+                                    <option value="{{ row['gym_id'] }}" selected> {{row['gym_name']}}</option>
+                                {% else %}
+                                    <option value="{{row['gym_id'] }}"> {{row['gym_name']}}</option> 
+                                {% endif %}
+
+
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </select></p>
+                </fieldset>
+
+                <p><input type="submit" value="Edit user_gym" name="edit_users_gyms" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/users_gyms'><input class="btn" type="button" value="Cancel"></a></p>
+            </form>
+</html>

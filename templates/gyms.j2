@@ -1,0 +1,120 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>gyms</title>
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * DIVS: browse, insert, update
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		} else if(dowhat == 'update') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'block';
+			document.getElementById('delete').style.display = 'none';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+
+	function new_gyms() {
+		showform('insert');
+	}
+
+	function update_gyms(pid) {
+		showform('update');
+	}
+
+	function browse_gyms() {
+		showform('browse');
+	}
+	</script>
+</head>
+
+<body onload="browse_gyms()">
+	<h1>gyms</h1>
+
+    <nav>
+      <a href="/" style="margin-inline-end: 10px">Home</a>  
+      <a href="/users" style="margin-inline-end: 10px">users</a>
+      <a href="/gyms" style="margin-inline-end: 10px">gyms</a>  
+      <a href="/users_gyms" style="margin-inline-end: 10px">users_gyms</a>  
+      <a href="/sessions" style="margin-inline-end: 10px">sessions</a>
+      <a href="/attempts">attempts</a>  
+    </nav>
+
+	<!-- browse -->
+	<div id="browse">
+	<p>Available functionality: Create, Read, Update</p>
+	<p><a href="#" onClick="new_gyms()">Add New</a> </p>
+
+	<table border="1" cellpadding="5">
+
+		<!-- Access gyms tuple passed from gyms.py --> 
+
+		{% if gyms %}
+			<thead>
+				<tr>
+					<!-- Iterate through each key in the first entry to get the column name -->
+					{% for key in gyms[0].keys() %}
+					
+					<!-- Create a <th> tag with the key inside of it, this will be the header row -->
+					<th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+				
+					<!-- End of this for loop -->
+					{% endfor %} 
+				</tr>
+
+			<tbody>
+				<!-- Iterate through every row in gyms -->
+				{% for row in gyms %}
+				<tr>
+					<!-- Then iterate through every key in the current row dictionary -->
+					{% for key in row.keys() %}
+
+					<!-- Create a <td> element with the value of that key in it -->
+					<td> {{row[key]}} </td> 
+					{% endfor %}
+
+					<!-- Create our edit button -->
+					<td><a href="edit_gyms/{{row["gym_id"]}}" class="btn btn-default">Edit</a></td>
+
+				</tr> 
+				{% endfor %} 
+		{% endif %} 
+	</table>   
+	</div>	
+
+	<!--insert-->
+	<div id="insert">
+		<!-- form to INSERT new data into gyms-->
+		<form id="insert_gyms" action="/gyms" method="post">
+			<p><legend><strong>Add gym</strong></legend></p>
+
+			<fieldset>
+				<!-- Input for gym_name -->
+				<label for="gym_name">gym_name:</label>
+				<input type="text" class="form-control" id="gym_name" name="gym_name" required>
+            </fieldset>
+
+            <!-- Create 'Add gym' and 'Cancel' buttons -->
+			<p><input type="submit" value="Add gym" name="add_gyms" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browse_gyms()"></p>
+        </form>
+	</div>
+
+</body>
+</html>

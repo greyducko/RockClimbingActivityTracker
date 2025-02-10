@@ -1,0 +1,77 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>Edit users table</title>
+</head>
+
+<body>
+    <div>
+        <table border="1" cellpadding="5"> 
+            <p> Editing row in users table: </p>
+
+            <!-- Access results tuple passed from users.py -->
+            {% if results %}
+                <thead>
+                    <tr>
+                        <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in results[0].keys() %}
+
+                        <!-- Create a <th> tag with the key inside of it, this will be the header row -->
+                        <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+                        
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+                <tbody>
+                    <!-- Now, iterate through every item in results -->
+                    {% for item in results %}
+                    <tr>
+                        <!-- Then iterate through every key in the current results dictionary -->
+                        {% for key in results[0].keys() %}
+                        
+                        <!-- Create a <td> element with the value of that key in it -->
+                        <td>{{results[0][key]}}</td> {% endfor %} 
+                    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>
+
+        <div id="edit">
+
+            <!-- form to edit data in users-->
+            <form id="edit_users" action="/edit_users/{{results[0]["user_id"]}}" method="post">
+                <p><legend><strong>Edit user</strong></legend></p>
+                <fieldset>
+                    <!-- Preset form inputs to match attributes currently stored for 'user_id' of row to be updated via value= and accessing the results tuple -->
+
+                    <!-- Create hidden form input to store the passed 'user_id' of the row we are editing so we can access it easily in our 'POST' method in users.py -->
+                    <input type="hidden" value="{{results[0]["user_id"]}}" class="form-control" id="user_id" name="user_id" required>
+                    
+                    <!-- Input for first_name -->
+                    <p><label for="first_name">first_name:</label>
+                    <input type="text" value="{{results[0]["first_name"]}}" class="form-control" id="first_name" name="first_name" required></p>
+
+                    <!-- Input for last_name -->
+                    <p><label for="last_name">last_name:</label>
+                    <input type="text" value="{{results[0]["last_name"]}}" class="form-control" id="last_name" name="last_name" required></p>
+
+                    <!-- Input for email -->
+                    <p><label for="email">email:</label>
+                    <input class="form-control" id="email" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" value="{{results[0]["email"]}}" required></p>
+
+                    <!-- Input for birth_date -->
+                    <p><label for="birth_date">birth_date:</label>
+                    <input type="date" value="{{results[0]["birth_date"]}}" class="form-control" id="birth_date" name="birth_date"></p>
+                
+                </fieldset>
+
+                <!-- Add 'Edit user' and 'Cancel' buttons -->
+                <p><input type="submit" value="Edit user" name="edit_users" class="btn btn-primary" style="margin:.5rem;">
+                <a href='/users'><input class="btn" type="button" value="Cancel"></a></p>
+            </form>
+</html>

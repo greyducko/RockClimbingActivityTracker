@@ -1,0 +1,125 @@
+<!-- Group 8 Charles Loughin, Harvey Ng -->
+<!-- This module adapted from starter code: https://github.com/osu-cs340-ecampus/flask-starter-app/ (Authors: Michael Curry, Andrew Kamand, @mlapresta (on github)) -->
+<!-- Date: 3/18/2024 -->
+<!-- The structure of the HTML is based off of the starter code. Original work: Accessing query results to display table; specific form inputs-->
+
+<html>
+<head>
+	<title>users</title>
+	<script language="JavaScript">
+	function showform(dowhat) {
+		/*
+		 * DIVS: browse, insert
+		 * this function sets one visible the others not
+		 */
+		if(dowhat == 'insert') {
+			document.getElementById('browse').style.display = 'none';
+			document.getElementById('insert').style.display = 'block';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		} else { //by default display browse
+			document.getElementById('browse').style.display = 'block';
+			document.getElementById('insert').style.display = 'none';
+			document.getElementById('edit').style.display = 'none';
+			document.getElementById('delete').style.display = 'none';
+		}
+	}
+
+	function new_users() {
+		showform('insert');
+	}
+
+	function browse_users() {
+		showform('browse');
+	}
+	</script>
+</head>
+
+<body onload="browse_users()">
+	<h1>users</h1> 
+
+	<nav>
+      <a href="/" style="margin-inline-end: 10px">Home</a>  
+      <a href="/users" style="margin-inline-end: 10px">users</a>
+      <a href="/gyms" style="margin-inline-end: 10px">gyms</a>  
+      <a href="/users_gyms" style="margin-inline-end: 10px">users_gyms</a>  
+      <a href="/sessions" style="margin-inline-end: 10px">sessions</a>
+      <a href="/attempts">attempts</a>  
+    </nav>
+
+	<!-- browse -->
+	<div id="browse">
+
+		<p>Available functionality: Create, Read, Update, Delete</p>
+		<p>Note: The email for each user must be unique.</p>
+		<p><a href="#" onClick="new_users()">Add New</a> </p>
+
+		<table border="1" cellpadding="5">
+
+            <!-- Access users tuple passed from users.py --> 
+
+            {% if users %}
+			    <thead>
+				    <tr>
+					    <!-- Iterate through each key in the first entry to get the column name -->
+                        {% for key in users[0].keys() %}
+					    
+                        <!-- Create a <th> tag with the key inside of it, this will be the header row -->
+					    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+					
+                        <!-- End of this for loop -->
+                        {% endfor %} 
+                    </tr>
+
+				<tbody>
+					<!-- Iterate through every row in users -->
+					{% for row in users %}
+					    <tr>
+						    <!-- Then iterate through every key in the current row dictionary -->
+                            {% for key in row.keys() %}
+
+						    <!-- Create a <td> element with the value of that key in it -->
+						    <td> {{row[key]}} </td> 
+                            {% endfor %}
+
+                            <!-- Create edit/delete buttons -->
+						    <td><a href="edit_users/{{row["user_id"]}}" class="btn btn-default">Edit</a></td>
+						    <td><a href="delete_users/{{row["user_id"]}}" class="btn btn-default">Delete</a></td>
+
+					    </tr> 
+                    {% endfor %} 
+            {% endif %} 
+        </table>   
+	</div>	
+
+	<!--insert-->
+	<div id="insert">
+		<!-- form to INSERT new data into users-->
+		<form id="insert_users" action="/users" method="post">
+			<p><legend><strong>Add user</strong></legend></p>
+			<fieldset>
+                
+				<!-- Input for first_name -->
+				<p><label for="first_name">first_name:</label>
+				<input type="text" class="form-control" id="first_name" name="first_name" required></p>
+
+				<!-- Input for last_name -->
+				<p><label for="last_name">last_name:</label>
+				<input type="text" class="form-control" id="last_name" name="last_name" required></p>
+
+				<!-- Input for email -->
+				<p><label for="email">email:</label>
+				<input type="email" class="form-control" id="email" name="email" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" required></p>
+				
+				<!-- Input for birth_date -->
+                <p><label for="birth_date">birth_date:</label>
+				<input type="date" class="form-control" id="birth_date" name="birth_date" ></p>
+            </fieldset>
+
+            <!-- Create 'Add user' and 'Cancel' buttons -->
+			<p><input type="submit" value="Add user" name="add_users" class="btn btn-primary" style="margin:.5rem;">
+			<input class="btn" type="button" value="Cancel" onClick="browse_users()"></p>
+        </form>
+	</div>
+</body>
+</html>
